@@ -199,7 +199,7 @@ def convert_properties(obj):
                     rc[k] = v
             except TypeError as e:
                 print("TypeError:", e)
-                print(f"{intf} value: {v}")
+                print(f"{intf}.{path}.{k} value: {v}")
         if path:
             rc = {path: rc}
         rc = {intf: rc}
@@ -256,14 +256,11 @@ class MQTTPublisher:
             password=self.password
         )
         #await self.client.connect()
-        async with self.client:
-            await self.publish(self.availability_topic, "online", retain=True)
-            await self.publish_discovery()
 
     async def disconnect(self):
         async with self.client:
             await self.publish(self.availability_topic, "offline", retain=True)
-            await self.client.disconnect()
+            #await self.client.disconnect()
 
     async def publish(self, topic, payload, retain=False):
         if VERBOSE:
@@ -277,7 +274,7 @@ class MQTTPublisher:
                 topic = f"{self.base_topic}/{key}"
                 await self.publish(topic, str(value))
             else:
-                print(f"Metric {key} ignored: {values}")
+                print(f"Metric {key} ignored: {value}")
 
     async def publish_discovery(self):
         for key, cfg in METRICS.items():
@@ -308,31 +305,46 @@ class MQTTPublisher:
             await self.publish(topic, json.dumps(payload), retain=True)
 
 async def websocket_loop(charger_host, mqtt_pub):
+    connect_failed_once = False
     while True:
         wc = WebConnect(charger_host)
         try:
             await wc.async_connect()
-            async with mqtt_pub.client:
-                print("MQTT connected, starting websocket loop...")
-                while True:
-                    metrics = await wc.async_recv()
-                    await mqtt_pub.publish_metrics(metrics)
+            print("Websocket connected.")
+            connect_failed_once = False
+            await mqtt_pub.client.publish(mqtt_pub.availability_topic, "online", retain=True)
+            await mqtt_pub.publish_discovery()
+            print("starting websocket loop...")
+            while True:
+                metrics = await wc.async_recv()
+                await mqtt_pub.publish_metrics(metrics)
         except Exception as e:
             print(f"Websocket error: {e}")
             print(traceback.format_exc())
             await asyncio.sleep(5)
+        except OSError as e:
+            if not connect_failed_once:
+                connect_failed_once = True
+                print(f"Connection error: {e}")
+            await asyncio.sleep(5)
         finally:
             await wc.async_close()
+    await mqtt_pub.client.publish(mqtt_pub.availability_topic, "offline", retain=True)
 
 async def mqtt_loop(config):
     mqtt_pub = MQTTPublisher(config["mqtt"])
     while True:
         try:
             await mqtt_pub.connect()
-            await websocket_loop(config["charger"]["host"], mqtt_pub)
+            async with mqtt_pub.client:
+                await websocket_loop(config["charger"]["host"], mqtt_pub)
         except MqttError as e:
             print(f"MQTT error: {e}")
             await asyncio.sleep(5)
+        except asyncio.exceptions.CancelledError:
+            print("Stopped from keyboard")
+            await mqtt_pub.disconnect()
+            break
         finally:
             try:
                 await mqtt_pub.disconnect()
