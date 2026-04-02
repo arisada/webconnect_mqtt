@@ -54,7 +54,8 @@ Example:
 ```json
 {
   "charger": {
-    "host": "porsche-charger.lan"
+    "host": "porsche-charger.lan",
+    "password": "your-user-password"
   },
   "mqtt": {
     "host": "homeassistant.lan",
@@ -68,6 +69,7 @@ Example:
 ```
 
 Set the host names accordingly. If more than one device is used, base_topic should be changed.
+The metrics are fetched from WebSocket without authentication, but authentication is required to perform Current Limit changes.
 
 ## Running Without Docker
 
@@ -120,13 +122,14 @@ If entities do not appear:
 
 ## Limitations and future improvement
 
-* Does not auto-discover charger IP
-* Too many useless and debug metrics are exported
-* Improve metrics naming
-* Integrate it into Home Assistant without MQTT
+* Does not auto-discover charger IP.
+* Too many useless and debug metrics are exported.
+* Integrate it into Home Assistant without MQTT.
+* Currently TLS certificates error are silently ignored and should not be used on untrusted networks.
 
 ---
 
 ## License
 
+Copyright (c) 2026 Aris Adamantiadis
 BSD 2-clause
