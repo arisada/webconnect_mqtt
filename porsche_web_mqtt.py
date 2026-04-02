@@ -28,17 +28,20 @@ METRICS = {
 # iCAN – Active Power
 # -------------------------
 "de.bebro.iCAN.activePowerL1.value": {
+    "pretty_name": "Active power L1",
     "unit": "W",
     "device_class": "power",
     "state_class": "measurement",
     "enabled_by_default": True
 },
 "de.bebro.iCAN.activePowerL2.value": {
+    "pretty_name": "Active power L2",
     "unit": "W",
     "device_class": "power",
     "state_class": "measurement",
 },
 "de.bebro.iCAN.activePowerL3.value": {
+    "pretty_name": "Active power L3",
     "unit": "W",
     "device_class": "power",
     "state_class": "measurement",
@@ -84,7 +87,7 @@ METRICS = {
 # -------------------------
 # WebServer – Charge State
 # -------------------------
-"de.bebro.WebServer.chargeState": {"entity_category": "diagnostic"},
+"de.bebro.WebServer.chargeState": {"pretty_name": "Charge state", "entity_category": "diagnostic"},
 
 # -------------------------
 # iCAN – Power State
@@ -113,8 +116,8 @@ METRICS = {
 # -------------------------
 # SCC – Charge Type / PLC
 # -------------------------
-"de.bebro.SCC.sigChargeType":      {"entity_category": "diagnostic"},
-"de.bebro.SCC.propIsV2GPLCEnabled": {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.sigChargeType":       {"pretty_name": "Charge type",    "entity_category": "diagnostic"},
+"de.bebro.SCC.propIsV2GPLCEnabled": {"pretty_name": "V2G PLC enabled", "entity_category": "diagnostic", "enabled_by_default": False},
 
 # -------------------------
 # SCC – EV Charge Parameters
@@ -142,19 +145,19 @@ METRICS = {
 # -------------------------
 # DTCHandler
 # -------------------------
-"de.bebro.DTCHandler.dtclist":  {"entity_category": "diagnostic", "enabled_by_default": False},
-"de.bebro.DTCHandler.dtccode":  {"entity_category": "diagnostic", "enabled_by_default": False},
-"de.bebro.DTCHandler.bDTCAdded": {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.DTCHandler.dtclist":   {"pretty_name": "Fault codes",     "entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.DTCHandler.dtccode":   {"pretty_name": "Last fault code", "entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.DTCHandler.bDTCAdded": {"pretty_name": "Fault code added","entity_category": "diagnostic", "enabled_by_default": False},
 
 # -------------------------
 # ConnectionManager – WiFi
 # -------------------------
-"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ssid":                 {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ssid":                 {"pretty_name": "WiFi SSID",            "entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.profile_name":         {"entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ap_id":                {"entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.security_type":        {"entity_category": "diagnostic", "enabled_by_default": False},
-"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.wifi_signal_strength": {"entity_category": "diagnostic", "enabled_by_default": False},
-"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ip_address":           {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.wifi_signal_strength": {"pretty_name": "WiFi signal strength", "entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ip_address":           {"pretty_name": "IP address",           "entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.netmask":              {"entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.search_domains":       {"entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.nameservers":          {"entity_category": "diagnostic", "enabled_by_default": False},
@@ -199,6 +202,7 @@ METRICS = {
     "retain": True,
 },
 "de.bebro.WebServer.cumulativeChargingData.totalTime": {
+    "pretty_name": "Total charging time",
     "device_class": "duration",
     "state_class": "measurement",
     "retain": True,
@@ -208,17 +212,17 @@ METRICS = {
 # Current Session
 # -------------------------
 "de.bebro.WebServer.swaggerCurrentSession.account": {},
-"de.bebro.WebServer.swaggerCurrentSession.chargingRate": {"unit": "kW", "device_class": "power", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.chargingType": {},
+"de.bebro.WebServer.swaggerCurrentSession.chargingRate": {"pretty_name": "Charging rate", "unit": "kW", "device_class": "power", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.chargingType": {"pretty_name": "Charging type"},
 "de.bebro.WebServer.swaggerCurrentSession.clockSrc": {},
-"de.bebro.WebServer.swaggerCurrentSession.costs": {"unit": "€", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.costs": {"pretty_name": "Session costs", "unit": "€", "state_class": "measurement"},
 "de.bebro.WebServer.swaggerCurrentSession.currency": {},
-"de.bebro.WebServer.swaggerCurrentSession.departTime": {},
-"de.bebro.WebServer.swaggerCurrentSession.duration": {"unit": "s", "device_class": "duration", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.endOfChargeTime": {},
-"de.bebro.WebServer.swaggerCurrentSession.endSoc": {"unit": "%", "device_class": "battery", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.departTime": {"pretty_name": "Departure time"},
+"de.bebro.WebServer.swaggerCurrentSession.duration": {"pretty_name": "Session duration", "unit": "s", "device_class": "duration", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.endOfChargeTime": {"pretty_name": "End of charge time"},
+"de.bebro.WebServer.swaggerCurrentSession.endSoc": {"pretty_name": "End SoC", "unit": "%", "device_class": "battery", "state_class": "measurement"},
 "de.bebro.WebServer.swaggerCurrentSession.endTime": {
-    "pretty_name": "Current end time",
+    "pretty_name": "Session end time",
     "device_class": "timestamp"
 },
 "de.bebro.WebServer.swaggerCurrentSession.energySumKwh": {
@@ -234,44 +238,45 @@ METRICS = {
     "device_class": "power",
     "state_class": "measurement",
 },
-"de.bebro.WebServer.swaggerCurrentSession.evTargetSoc": {"unit": "%", "device_class": "battery", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.evTargetSoc": {"pretty_name": "Target SoC", "unit": "%", "device_class": "battery", "state_class": "measurement"},
 "de.bebro.WebServer.swaggerCurrentSession.evVasAvailability": {},
 "de.bebro.WebServer.swaggerCurrentSession.pcid": {},
-"de.bebro.WebServer.swaggerCurrentSession.powerRange": {"unit": "km", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.profileChargingState": {},
-"de.bebro.WebServer.swaggerCurrentSession.remainingChargingTime": {"unit": "s", "device_class": "duration", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.selfEnergy": {"unit": "kWh", "device_class": "energy", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.sessionId": {},
-"de.bebro.WebServer.swaggerCurrentSession.soc": {"unit": "%", "device_class": "battery", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.solarEnergyShare": {"unit": "%", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.startSoc": {"unit": "%", "device_class": "battery", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.startTime": {"device_class": "timestamp"},
-"de.bebro.WebServer.swaggerCurrentSession.timerChargingState": {},
-"de.bebro.WebServer.swaggerCurrentSession.totalRange": {"unit": "km", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.vehicleBrand": {},
-"de.bebro.WebServer.swaggerCurrentSession.vehicleModel": {},
+"de.bebro.WebServer.swaggerCurrentSession.powerRange": {"pretty_name": "Power range", "unit": "km", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.profileChargingState": {"pretty_name": "Profile charging state"},
+"de.bebro.WebServer.swaggerCurrentSession.remainingChargingTime": {"pretty_name": "Remaining charging time", "unit": "s", "device_class": "duration", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.selfEnergy": {"pretty_name": "Self-generated energy", "unit": "kWh", "device_class": "energy", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.sessionId": {"pretty_name": "Session ID"},
+"de.bebro.WebServer.swaggerCurrentSession.soc": {"pretty_name": "State of charge", "unit": "%", "device_class": "battery", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.solarEnergyShare": {"pretty_name": "Solar energy share", "unit": "%", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.startSoc": {"pretty_name": "Start SoC", "unit": "%", "device_class": "battery", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.startTime": {"pretty_name": "Session start time", "device_class": "timestamp"},
+"de.bebro.WebServer.swaggerCurrentSession.timerChargingState": {"pretty_name": "Timer charging state"},
+"de.bebro.WebServer.swaggerCurrentSession.totalRange": {"pretty_name": "Total range", "unit": "km", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurrentSession.vehicleBrand": {"pretty_name": "Vehicle brand"},
+"de.bebro.WebServer.swaggerCurrentSession.vehicleModel": {"pretty_name": "Vehicle model"},
 "de.bebro.WebServer.swaggerCurrentSession.whitelist": {},
 
 # -------------------------
 # Swagger Curve
 # -------------------------
 "de.bebro.WebServer.swaggerCurve.availableSelfGeneratedPower": {
+    "pretty_name": "Available self-generated power",
     "unit": "kW",
     "device_class": "power",
     "state_class": "measurement",
 },
-"de.bebro.WebServer.swaggerCurve.currentEnergyCost": {"unit": "€", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurve.powerL1": {"unit": "kW", "device_class": "power", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurve.powerL2": {"unit": "kW", "device_class": "power", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurve.powerL3": {"unit": "kW", "device_class": "power", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurve.powerLimitL1": {"unit": "kW", "device_class": "power", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurve.powerLimitL2": {"unit": "kW", "device_class": "power", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurve.powerLimitL3": {"unit": "kW", "device_class": "power", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurve.powerLimitReasonL1": {},
-"de.bebro.WebServer.swaggerCurve.powerLimitReasonL2": {},
-"de.bebro.WebServer.swaggerCurve.powerLimitReasonL3": {},
-"de.bebro.WebServer.swaggerCurve.sessionId": {},
-"de.bebro.WebServer.swaggerCurve.startTime": {"device_class": "timestamp"},
+"de.bebro.WebServer.swaggerCurve.currentEnergyCost": {"pretty_name": "Current energy cost", "unit": "€", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurve.powerL1": {"pretty_name": "Power L1", "unit": "kW", "device_class": "power", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurve.powerL2": {"pretty_name": "Power L2", "unit": "kW", "device_class": "power", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurve.powerL3": {"pretty_name": "Power L3", "unit": "kW", "device_class": "power", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurve.powerLimitL1": {"pretty_name": "Power limit L1", "unit": "kW", "device_class": "power", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurve.powerLimitL2": {"pretty_name": "Power limit L2", "unit": "kW", "device_class": "power", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurve.powerLimitL3": {"pretty_name": "Power limit L3", "unit": "kW", "device_class": "power", "state_class": "measurement"},
+"de.bebro.WebServer.swaggerCurve.powerLimitReasonL1": {"pretty_name": "Power limit reason L1"},
+"de.bebro.WebServer.swaggerCurve.powerLimitReasonL2": {"pretty_name": "Power limit reason L2"},
+"de.bebro.WebServer.swaggerCurve.powerLimitReasonL3": {"pretty_name": "Power limit reason L3"},
+"de.bebro.WebServer.swaggerCurve.sessionId": {"pretty_name": "Session ID"},
+"de.bebro.WebServer.swaggerCurve.startTime": {"pretty_name": "Session start time", "device_class": "timestamp"},
 "de.bebro.WebServer.swaggerCurve.timestamp": {"device_class": "timestamp"},
 }
 
