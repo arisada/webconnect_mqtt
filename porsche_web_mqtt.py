@@ -30,6 +30,7 @@ METRICS = {
     "unit": "W",
     "device_class": "power",
     "state_class": "measurement",
+    "enabled_by_default": True
 },
 "de.bebro.iCAN.activePowerL2.value": {
     "unit": "W",
@@ -63,7 +64,7 @@ METRICS = {
 # -------------------------
 # SelfTest – Temperature
 # -------------------------
-"de.bebro.SelfTest.Temperature.Temp_CPU.error": {"entity_category": "diagnostic"},
+"de.bebro.SelfTest.Temperature.Temp_CPU.error": {"entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.SelfTest.Temperature.Temp_CPU.sensorType": {"entity_category": "diagnostic"},
 "de.bebro.SelfTest.Temperature.Temp_CPU.warning": {"entity_category": "diagnostic"},
 
@@ -391,6 +392,7 @@ class MQTTPublisher:
                 "state_topic": f"{self.base_topic}/{key}",
                 "unique_id": unique_id,
                 "availability_topic": self.availability_topic,
+                "enabled_by_default": cfg.get("enabled_by_default", True),
                 "device": {
                     "identifiers": [self.device_id],
                     "name": "Porsche EV Charger",
