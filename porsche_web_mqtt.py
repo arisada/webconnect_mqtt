@@ -81,6 +81,53 @@ METRICS = {
 "de.bebro.SelfTest.Temperature.Temp_LED2.warning": {"entity_category": "diagnostic"},
 
 # -------------------------
+# WebServer – Charge State
+# -------------------------
+"de.bebro.WebServer.chargeState": {"entity_category": "diagnostic"},
+
+# -------------------------
+# iCAN – LED State
+# -------------------------
+"de.bebro.iCAN.propjLedState.LedcState.LEDCstate":               {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.Mode.halfringLEDs":                  {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.halfringLed.brightness":             {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.halfringLed.color":                  {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.halfringLed.transition":             {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.halfringLedPulseSettings.curve":     {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.halfringLedPulseSettings.max":       {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.halfringLedPulseSettings.period":    {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.powerButtonLed.brightness":          {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.iCAN.propjLedState.powerButtonLed.color":               {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
+# HMI
+# -------------------------
+"de.bebro.HMI.fahMessage": {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
+# SCC – EV Charge Parameters
+# -------------------------
+"de.bebro.SCC.propChargeParamEV.EVCapaClass":       {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.propChargeParamEV.EVMaxEnergyReq":    {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.propChargeParamEV.EVMinEnergyReq":    {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.propChargeParamEV.EVMinPower":        {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.propChargeParamEV.EVNumCurrentPhases":{"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.propChargeParamEV.EVOwnCurrentReq":   {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.propChargeParamEV.EVSymmCurrentsOnly":{"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.propChargeParamEV.EVTargetEnergyReq": {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.propChargeParamEV.EVTargetSoc":       {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
+# SCC – Device Name
+# -------------------------
+"de.bebro.SCC.name.OEMId":           {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.name.UserDefinedName": {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.name.brand":           {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.name.isInWhitelist":   {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.name.model":           {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.SCC.name.pcid":            {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
 # ConnectionManager – WiFi
 # -------------------------
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ssid":                 {"entity_category": "diagnostic", "enabled_by_default": False},
@@ -95,6 +142,12 @@ METRICS = {
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.length":               {"entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.toState":              {"entity_category": "diagnostic", "enabled_by_default": False},
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.last_wifi_status":     {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
+# ConnectionManager – PLC
+# -------------------------
+"de.bebro.ConnectionManager.PlcNetStatus.NetworkStatus.nameservers":    {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.PlcNetStatus.NetworkStatus.search_domains": {"entity_category": "diagnostic", "enabled_by_default": False},
 
 # -------------------------
 # ConnectionManager – Global
@@ -219,7 +272,7 @@ def flatten_dict(d, parent_key='', sep='.'):
     return dict(items)
 
 def convert_properties(obj):
-    json_interfaces = ("de.bebro.WebServer", "de.bebro.iCAN")
+    json_interfaces = ("de.bebro.WebServer", "de.bebro.iCAN", "de.bebro.SCC")
     rc = {}
     if "interface" in obj and "args" in obj:
         intf = obj["interface"]
@@ -227,13 +280,13 @@ def convert_properties(obj):
         path = obj["path"].lstrip('/')
         for k, v in args.items():
             try:
-                if intf in json_interfaces:
+                if intf in json_interfaces and isinstance(v, str):
                     rc[k] = json.loads(v)
                 else:
                     rc[k] = v
-            except TypeError as e:
-                print("TypeError:", e)
-                print(f"{intf}.{path}.{k} value: {v}")
+            except (TypeError, json.JSONDecodeError) as e:
+                print(f"Parse error for {intf}.{path}.{k}: {e}")
+                rc[k] = v
         if path:
             rc = {path: rc}
         rc = {intf: rc}
