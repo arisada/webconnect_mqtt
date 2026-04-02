@@ -7,6 +7,7 @@ import asyncio
 import websockets
 import traceback
 from websockets.datastructures import Headers
+from websockets.exceptions import ConnectionClosedError
 import ssl
 import json
 import uuid
@@ -555,6 +556,10 @@ async def websocket_loop(charger_host, mqtt_pub):
             if not connect_failed_once:
                 connect_failed_once = True
                 print(f"Connection error: {e}")
+            await asyncio.sleep(5)
+        except ConnectionClosedError as e:
+            print(f"Websocket connection dropped: {e}")
+            await mqtt_pub.client.publish(mqtt_pub.availability_topic, "offline", retain=True)
             await asyncio.sleep(5)
         except Exception as e:
             print(f"Websocket error: {e}")
