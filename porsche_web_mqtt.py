@@ -168,10 +168,12 @@ METRICS = {
     "unit": "kWh",
     "device_class": "energy",
     "state_class": "total_increasing",
+    "retain": True,
 },
 "de.bebro.WebServer.cumulativeChargingData.totalTime": {
     "device_class": "duration",
     "state_class": "measurement",
+    "retain": True,
 },
 
 # -------------------------
@@ -196,6 +198,7 @@ METRICS = {
     "unit": "kWh",
     "device_class": "energy",
     "state_class": "total_increasing",
+    "retain": True,
 },
 "de.bebro.WebServer.swaggerCurrentSession.evChargingRatekW": {
     "pretty_name": "Current Charging rate",
@@ -459,9 +462,9 @@ class MQTTPublisher:
     async def publish_metrics(self, metrics):
         for key, value in metrics.items():
             if key in METRICS:
-                key = key.replace(".", "_")
-                topic = f"{self.base_topic}/{key}"
-                await self.publish(topic, str(value))
+                cfg = METRICS[key]
+                topic = f"{self.base_topic}/{key.replace('.', '_')}"
+                await self.publish(topic, str(value), retain=cfg.get("retain", False))
             else:
                 print(f"Metric {key} ignored: {value}")
 
