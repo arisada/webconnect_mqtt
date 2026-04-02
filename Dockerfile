@@ -22,6 +22,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application
 COPY porsche_web_mqtt.py .
-COPY config.json .
 # Default command
 CMD ["python", "porsche_web_mqtt.py"]
