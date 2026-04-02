@@ -83,6 +83,7 @@ METRICS = {
 # Cumulative Charging Data
 # -------------------------
 "de.bebro.WebServer.cumulativeChargingData.totalEnergy": {
+    "pretty_name": "Total charging energy",
     "unit": "kWh",
     "device_class": "energy",
     "state_class": "total_increasing",
@@ -105,13 +106,18 @@ METRICS = {
 "de.bebro.WebServer.swaggerCurrentSession.duration": {"unit": "s", "device_class": "duration", "state_class": "measurement"},
 "de.bebro.WebServer.swaggerCurrentSession.endOfChargeTime": {},
 "de.bebro.WebServer.swaggerCurrentSession.endSoc": {"unit": "%", "device_class": "battery", "state_class": "measurement"},
-"de.bebro.WebServer.swaggerCurrentSession.endTime": {"device_class": "timestamp"},
+"de.bebro.WebServer.swaggerCurrentSession.endTime": {
+    "pretty_name": "Current end time",
+    "device_class": "timestamp"
+},
 "de.bebro.WebServer.swaggerCurrentSession.energySumKwh": {
+    "pretty_name": "Current total energy",
     "unit": "kWh",
     "device_class": "energy",
     "state_class": "total_increasing",
 },
 "de.bebro.WebServer.swaggerCurrentSession.evChargingRatekW": {
+    "pretty_name": "Current Charging rate",
     "unit": "kW",
     "device_class": "power",
     "state_class": "measurement",
@@ -386,7 +392,7 @@ class MQTTPublisher:
             unique_id = f"{self.device_id}_{key}"
 
             payload = {
-                "name": key,
+                "name": cfg.get("pretty_name", key),
                 "state_topic": f"{self.base_topic}/{key}",
                 "unique_id": unique_id,
                 "availability_topic": self.availability_topic,
