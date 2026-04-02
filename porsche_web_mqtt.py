@@ -12,6 +12,7 @@ import json
 import uuid
 import getopt
 import sys
+import aiohttp
 from aiomqtt import Client as MQTTClient, MqttError
 
 CONFIG_FILE = "config.json"
@@ -235,6 +236,109 @@ class WebConnect:
     async def async_close(self):
         if self._ws:
             await self._ws.close()
+
+class WebConnectClient:
+
+    def __init__(self, config: dict):
+        self.host = config["charger"]["host"]
+        self.password = config["charger"]["password"]
+
+        self._session: Optional[aiohttp.ClientSession] = None
+        self._token: Optional[str] = None
+        self._token_expiry: Optional[int] = None
+
+        self._refresh_task = None
+        self._deepsleep_task = None
+
+        self.current_limit = None
+
+    async def start(self):
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        connector = aiohttp.TCPConnector(ssl=ssl_context)
+
+        self._session = aiohttp.ClientSession(connector=connector)
+        await self.login()
+        self._refresh_task = asyncio.create_task(self._refresh_loop())
+
+    async def stop(self):
+        if self._refresh_task:
+            self._refresh_task.cancel()
+        if self._deepsleep_task:
+            self._deepsleep_task.cancel()
+        if self._session:
+            await self._session.close()
+    def _auth_headers(self):
+        return {
+            "Authorization": f"Bearer {self._token}"
+        }
+    async def login(self):
+        url = f"https://{self.host}/jwt/login"
+
+        data = {
+            "user": "user",
+            "pass": self.password
+        }
+
+        async with self._session.post(
+            url,
+            data=data,
+            headers={"Accept": "application/json", "Referer":f"https://{self.host}/"}
+        ) as resp:
+
+            if resp.status != 200:
+                raise RuntimeError(f"Login failed: {resp.status}")
+
+            payload = await resp.json()
+            self._token = payload["token"]
+            vprint("Web interface logged in")
+
+    async def refresh(self):
+        url = f"https://{self.host}/jwt/refresh"
+
+        async with self._session.get(
+            url,
+            headers={**self._auth_headers(), "Referer":f"https://{self.host}/"}
+        ) as resp:
+
+            if resp.status != 200:
+                # fallback to full login
+                await self.login()
+                return
+
+            payload = await resp.json()
+            self._token = payload["token"]
+            vprint("Web interface successful refresh")
+    
+    async def _refresh_loop(self):
+        while True:
+            await asyncio.sleep(30)
+            await self.refresh()
+    
+    async def setHMICurrentLimit(self, value: int) -> bool:
+        url = (
+            f"https://{self.host}/v1/api/SCC/properties/"
+            f"propHMICurrentLimit?value={value}"
+        )
+
+        async with self._session.put(
+            url,
+            headers={**self._auth_headers(), "Referer":f"https://{self.host}/"}
+        ) as resp:
+
+            if resp.status != 200:
+                vprint(f"Error setting setHMICurrentLimit({value}): {resp.status}")
+                return False
+
+            text = await resp.text()
+
+            if "OK" in text:
+                self.current_limit = value
+                vprint(f"Web interface successful setHMICurrentLimit({value})")
+                return True
+            print(f"Web interface setHMICurrentLimit({value}):{text}")
+            return False
 
 class MQTTPublisher:
 
