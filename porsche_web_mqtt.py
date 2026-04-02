@@ -81,6 +81,32 @@ METRICS = {
 "de.bebro.SelfTest.Temperature.Temp_LED2.warning": {"entity_category": "diagnostic"},
 
 # -------------------------
+# ConnectionManager – WiFi
+# -------------------------
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ssid":                 {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.profile_name":         {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ap_id":                {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.security_type":        {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.wifi_signal_strength": {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ip_address":           {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.netmask":              {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.search_domains":       {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.nameservers":          {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.length":               {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.toState":              {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.last_wifi_status":     {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
+# ConnectionManager – Global
+# -------------------------
+"de.bebro.ConnectionManager.GlobalNetStatus.NetworkStatus.toState": {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
+# ConnectionManager – Profiles
+# -------------------------
+"de.bebro.ConnectionManager.NetworkProfileManagement.Config.newCount": {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
 # Cumulative Charging Data
 # -------------------------
 "de.bebro.WebServer.cumulativeChargingData.totalEnergy": {
