@@ -14,7 +14,7 @@ import uuid
 import getopt
 import sys
 import aiohttp
-from aiomqtt import Client as MQTTClient, MqttError
+from aiomqtt import Client as MQTTClient, MqttError, Will
 
 CONFIG_FILE = "config.json"
 
@@ -446,7 +446,8 @@ class MQTTPublisher:
             self.host,
             port=self.port,
             username=self.username,
-            password=self.password
+            password=self.password,
+            will=Will(self.availability_topic, "offline", retain=True),
         )
         #await self.client.connect()
 
