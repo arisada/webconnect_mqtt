@@ -547,7 +547,6 @@ async def websocket_loop(charger_host, mqtt_pub):
             print("Websocket connected.")
             connect_failed_once = False
             await mqtt_pub.client.publish(mqtt_pub.availability_topic, "online", retain=True)
-            await mqtt_pub.publish_discovery()
             print("starting websocket loop...")
             while True:
                 metrics = await wc.async_recv()
@@ -577,6 +576,7 @@ async def mqtt_loop(config):
             async with mqtt_pub.client:
                 print("MQTT connected")
                 await mqtt_pub.client.subscribe(mqtt_pub.current_limit_command_topic)
+                await mqtt_pub.publish_discovery()
                 await mqtt_pub.publish_current_limit_discovery()
                 await asyncio.gather(
                     websocket_loop(config["charger"]["host"], mqtt_pub),
