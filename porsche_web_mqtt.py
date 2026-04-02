@@ -87,6 +87,11 @@ METRICS = {
 "de.bebro.WebServer.chargeState": {"entity_category": "diagnostic"},
 
 # -------------------------
+# iCAN – Power State
+# -------------------------
+"de.bebro.iCAN.pwr_stategm_value": {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
 # iCAN – LED State
 # -------------------------
 "de.bebro.iCAN.propjLedState.LedcState.LEDCstate":               {"entity_category": "diagnostic", "enabled_by_default": False},
@@ -104,6 +109,12 @@ METRICS = {
 # HMI
 # -------------------------
 "de.bebro.HMI.fahMessage": {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
+# SCC – Charge Type / PLC
+# -------------------------
+"de.bebro.SCC.sigChargeType":      {"entity_category": "diagnostic"},
+"de.bebro.SCC.propIsV2GPLCEnabled": {"entity_category": "diagnostic", "enabled_by_default": False},
 
 # -------------------------
 # SCC – EV Charge Parameters
@@ -129,6 +140,13 @@ METRICS = {
 "de.bebro.SCC.name.pcid":            {"entity_category": "diagnostic", "enabled_by_default": False},
 
 # -------------------------
+# DTCHandler
+# -------------------------
+"de.bebro.DTCHandler.dtclist":  {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.DTCHandler.dtccode":  {"entity_category": "diagnostic", "enabled_by_default": False},
+"de.bebro.DTCHandler.bDTCAdded": {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
 # ConnectionManager – WiFi
 # -------------------------
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.ssid":                 {"entity_category": "diagnostic", "enabled_by_default": False},
@@ -145,6 +163,11 @@ METRICS = {
 "de.bebro.ConnectionManager.WifiNetStatus.NetworkStatus.last_wifi_status":     {"entity_category": "diagnostic", "enabled_by_default": False},
 
 # -------------------------
+# ConnectionManager – Network Controller
+# -------------------------
+"de.bebro.ConnectionManager.NetworkController.NetworkController.scanResults": {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
 # ConnectionManager – PLC
 # -------------------------
 "de.bebro.ConnectionManager.PlcNetStatus.NetworkStatus.nameservers":    {"entity_category": "diagnostic", "enabled_by_default": False},
@@ -159,6 +182,11 @@ METRICS = {
 # ConnectionManager – Profiles
 # -------------------------
 "de.bebro.ConnectionManager.NetworkProfileManagement.Config.newCount": {"entity_category": "diagnostic", "enabled_by_default": False},
+
+# -------------------------
+# Charging History
+# -------------------------
+"de.bebro.WebServer.swaggerHistory": {"pretty_name": "Charging history", "retain": True},
 
 # -------------------------
 # Cumulative Charging Data
@@ -464,7 +492,8 @@ class MQTTPublisher:
             if key in METRICS:
                 cfg = METRICS[key]
                 topic = f"{self.base_topic}/{key.replace('.', '_')}"
-                await self.publish(topic, str(value), retain=cfg.get("retain", False))
+                payload = json.dumps(value) if isinstance(value, (list, dict)) else str(value)
+                await self.publish(topic, payload, retain=cfg.get("retain", False))
             else:
                 print(f"Metric {key} ignored: {value}")
 
