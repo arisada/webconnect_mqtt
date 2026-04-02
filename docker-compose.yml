@@ -5,15 +5,5 @@ services:
     build: .
     container_name: ev-mqtt-bridge
     restart: unless-stopped
-
-#    environment:
-#      MQTT_HOST: 192.168.1.10
-#      MQTT_PORT: 1883
-#      MQTT_USERNAME: youruser
-#      MQTT_PASSWORD: yourpassword
-#      MQTT_TOPIC_PREFIX: evcharger
-
-    # Optional: if you need host networking (e.g. for mDNS or local discovery)
-    # network_mode: host
-
-    # Otherwise use default bridge network
+    volumes:
+      - ./config.json:/config.json:ro
