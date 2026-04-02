@@ -384,6 +384,8 @@ class MQTTPublisher:
 
         self.device_id = "porsche_ev_charger"
         self.availability_topic = f"{self.base_topic}/status"
+        self.current_limit_topic = f"{self.base_topic}/current_limit"
+        self.current_limit_command_topic = f"{self.base_topic}/current_limit/set"
 
     async def connect(self):
         self.client = MQTTClient(
@@ -407,6 +409,29 @@ class MQTTPublisher:
                 await self.publish(topic, str(value))
             else:
                 print(f"Metric {key} ignored: {value}")
+
+    async def publish_current_limit_discovery(self):
+        unique_id = f"{self.device_id}_current_limit"
+        payload = {
+            "name": "Charging current limit",
+            "state_topic": self.current_limit_topic,
+            "command_topic": self.current_limit_command_topic,
+            "unique_id": unique_id,
+            "min": 0,
+            "max": 16,
+            "step": 1,
+            "unit_of_measurement": "A",
+            "device_class": "current",
+            "availability_topic": self.availability_topic,
+            "device": {
+                "identifiers": [self.device_id],
+                "name": "Porsche EV Charger",
+                "manufacturer": "Porsche",
+                "model": "EV Charger"
+            }
+        }
+        topic = f"homeassistant/number/{unique_id}/config"
+        await self.publish(topic, json.dumps(payload), retain=True)
 
     async def publish_discovery(self):
         for key, cfg in METRICS.items():
@@ -436,6 +461,28 @@ class MQTTPublisher:
 
             topic = f"homeassistant/sensor/{unique_id}/config"
             await self.publish(topic, json.dumps(payload), retain=True)
+
+async def handle_current_limit_command(value_str, config, mqtt_pub):
+    try:
+        value = int(value_str)
+    except ValueError:
+        print(f"Invalid current limit command: {value_str!r}")
+        return
+    charger = WebConnectClient(config)
+    try:
+        await charger.start()
+        success = await charger.setHMICurrentLimit(value)
+        if success:
+            await mqtt_pub.publish(mqtt_pub.current_limit_topic, str(value), retain=True)
+    except Exception as e:
+        print(f"Error setting current limit: {e}")
+    finally:
+        await charger.stop()
+
+async def mqtt_command_loop(config, mqtt_pub):
+    async for message in mqtt_pub.client.messages:
+        if message.topic.matches(mqtt_pub.current_limit_command_topic):
+            await handle_current_limit_command(message.payload.decode(), config, mqtt_pub)
 
 async def websocket_loop(charger_host, mqtt_pub):
     connect_failed_once = False
@@ -471,7 +518,12 @@ async def mqtt_loop(config):
             await mqtt_pub.connect()
             async with mqtt_pub.client:
                 print("MQTT connected")
-                await websocket_loop(config["charger"]["host"], mqtt_pub)
+                await mqtt_pub.client.subscribe(mqtt_pub.current_limit_command_topic)
+                await mqtt_pub.publish_current_limit_discovery()
+                await asyncio.gather(
+                    websocket_loop(config["charger"]["host"], mqtt_pub),
+                    mqtt_command_loop(config, mqtt_pub),
+                )
         except MqttError as e:
             print(f"MQTT error: {e}")
             await asyncio.sleep(5)
