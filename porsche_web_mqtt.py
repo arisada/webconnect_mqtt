@@ -367,11 +367,6 @@ class MQTTPublisher:
         )
         #await self.client.connect()
 
-    async def disconnect(self):
-        async with self.client:
-            await self.publish(self.availability_topic, "offline", retain=True)
-            #await self.client.disconnect()
-
     async def publish(self, topic, payload, retain=False):
         if VERBOSE:
             print(f"[MQTT] {topic} → {payload}")
@@ -428,18 +423,18 @@ async def websocket_loop(charger_host, mqtt_pub):
             while True:
                 metrics = await wc.async_recv()
                 await mqtt_pub.publish_metrics(metrics)
-        except Exception as e:
-            print(f"Websocket error: {e}")
-            print(traceback.format_exc())
-            await asyncio.sleep(5)
         except OSError as e:
             if not connect_failed_once:
                 connect_failed_once = True
                 print(f"Connection error: {e}")
             await asyncio.sleep(5)
+        except Exception as e:
+            print(f"Websocket error: {e}")
+            print(traceback.format_exc())
+            await mqtt_pub.client.publish(mqtt_pub.availability_topic, "offline", retain=True)
+            await asyncio.sleep(5)
         finally:
             await wc.async_close()
-    await mqtt_pub.client.publish(mqtt_pub.availability_topic, "offline", retain=True)
 
 async def mqtt_loop(config):
     mqtt_pub = MQTTPublisher(config["mqtt"])
@@ -447,19 +442,14 @@ async def mqtt_loop(config):
         try:
             await mqtt_pub.connect()
             async with mqtt_pub.client:
+                print("MQTT connected")
                 await websocket_loop(config["charger"]["host"], mqtt_pub)
         except MqttError as e:
             print(f"MQTT error: {e}")
             await asyncio.sleep(5)
         except asyncio.exceptions.CancelledError:
             print("Stopped from keyboard")
-            await mqtt_pub.disconnect()
             break
-        finally:
-            try:
-                await mqtt_pub.disconnect()
-            except:
-                pass
 
 async def main():
     parse_args()
