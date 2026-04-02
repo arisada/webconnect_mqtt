@@ -6,4 +6,4 @@ services:
     container_name: ev-mqtt-bridge
     restart: unless-stopped
     volumes:
-      - ./config.json:/config.json:ro
+      - ./config.json:/app/config.json:ro
