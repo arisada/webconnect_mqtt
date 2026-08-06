@@ -510,7 +510,7 @@ class MQTTPublisher:
             "command_topic": self.current_limit_command_topic,
             "unique_id": unique_id,
             "min": 0,
-            "max": 16,
+            "max": 32,
             "step": 1,
             "unit_of_measurement": "A",
             "device_class": "current",
